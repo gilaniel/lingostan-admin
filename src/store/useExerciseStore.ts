@@ -15,6 +15,7 @@ type ExerciseTypeItem = {
 type Excercise = {
   data: ExerciseItem[];
   isLoading: boolean;
+  isSaving: boolean;
   activeExercise: ExerciseItem;
   types: ExerciseTypeItem[];
   activeType: ExerciseTypeItem;
@@ -26,11 +27,13 @@ type Excercise = {
     params: CreateExercise<T>
   ) => Promise<boolean>;
   fetchData: () => Promise<ExerciseItem[]>;
+  delete: (id: number) => Promise<any>;
 };
 
 export const useExerciseStore = create<Excercise>((set, get) => ({
   data: [],
   isLoading: true,
+  isSaving: false,
   activeExercise: {} as ExerciseItem,
   activeType: {} as ExerciseTypeItem,
   types: [
@@ -60,7 +63,22 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
     }),
 
   saveExercise: async (params) => {
-    await apiClient.put("/learning/exercises", params);
+    set({
+      isSaving: true,
+    });
+
+    const url = `/learning/exercises${params.id ? `/${params.id}` : ""}`;
+
+    await apiClient(url, {
+      method: params.id ? "patch" : "put",
+      data: params,
+    });
+
+    await get().fetchData();
+
+    set({
+      isSaving: false,
+    });
 
     await get().fetchData();
 
@@ -72,9 +90,7 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
 
     try {
       const activeLang = langsStore.getState().activeLang;
-      const type = get().activeType.key;
-
-      if (!type) return [];
+      const type = get().activeType.key || undefined;
 
       const params = {
         languageId: activeLang.id,
@@ -98,5 +114,11 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+
+  delete: async (id) => {
+    await apiClient.delete(`/learning/exercises/${id}`);
+
+    await get().fetchData();
   },
 }));

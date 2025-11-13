@@ -10,7 +10,7 @@ export default function LanguagesPage() {
   const [activeLang, setACtiveLang] = useState<Lang>({} as Lang);
 
   return (
-    <div className="flex flex-col gap-5 items-start">
+    <div className="flex flex-col gap-5 items-start pb-[500px]">
       <h1 className="text-3xl font-semibold">Языки</h1>
 
       <div className="flex gap-3 bg-default-100 p-4 rounded-medium">

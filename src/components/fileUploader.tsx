@@ -51,7 +51,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, invalid, name }) => {
       <div className="absolute w-full h-10 left-0 top-0 pointer-events-none flex gap-2 items-center justify-center text-[14px] px-2">
         {name ? (
           <div className="overflow-hidden overflow-ellipsis whitespace-nowrap max-w-full">
-            {name.replace("/api/files/", "")}
+            {name.replace("/api/files/", "").split("-5423-")[0]}
           </div>
         ) : (
           <div className="flex gap-2 items-center justify-center">

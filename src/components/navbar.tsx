@@ -6,7 +6,6 @@ import {
   NavbarItem,
   NavbarMenu,
   NavbarMenuItem,
-  NavbarMenuToggle,
 } from "@heroui/navbar";
 import { link as linkStyles } from "@heroui/theme";
 import clsx from "clsx";
@@ -14,7 +13,7 @@ import clsx from "clsx";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Logo } from "@/components/icons";
-import { LogOut } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { addToast } from "@heroui/toast";
 import { apiClient } from "@/services/https";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -25,6 +24,14 @@ const menuItems = [
   {
     name: "Языки",
     path: "/languages",
+  },
+  {
+    name: "Модули",
+    path: "/modules",
+  },
+  {
+    name: "Уроки",
+    path: "/lessons",
   },
   {
     name: "Упражнения",
@@ -58,10 +65,18 @@ export const Navbar = () => {
       position="sticky"
       disableAnimation
       isMenuOpen={isMenuOpen}
-      onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        {user.email && <NavbarMenuToggle className="cursor-pointer" />}
+        {user.email && (
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setIsMenuOpen((prev) => !prev);
+            }}
+          >
+            {isMenuOpen ? <X /> : <Menu />}
+          </div>
+        )}
         <NavbarBrand className="gap-3 max-w-fit">
           <Link
             className="flex justify-start items-center gap-1"
@@ -110,7 +125,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu className="max-w-full px-0">
-        <div className="mx-auto max-w-7xl w-full px-6">
+        <div className="mx-auto max-w-7xl w-full px-6 flex flex-col gap-4">
           {menuItems.map((item, index) => (
             <NavbarMenuItem
               key={`${item}-${index}`}

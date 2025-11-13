@@ -5,10 +5,17 @@ import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateListenForm } from "./components/createListenForm";
 import { useExerciseStore } from "@/store/useExerciseStore";
-import { ExerciseItem } from "@/types/exercises/model";
+import {
+  CreateExercise,
+  ExerciseItem,
+  ExerciseType,
+} from "@/types/exercises/model";
+import { useLessonsStore } from "@/store/useLessonsStore";
+import { LearningHeader } from "@/components/learningHeader";
 
 const ExercisesPage = () => {
   const { langs, activeLang, setACtiveLang } = useLangsStore();
+  const { fetchData: fetchLessons } = useLessonsStore();
   const {
     fetchData,
     data: exercises,
@@ -17,12 +24,38 @@ const ExercisesPage = () => {
     types,
     activeType,
     setActiveType,
+    delete: deleteItem,
+    activeExercise,
+    saveExercise,
   } = useExerciseStore();
 
   const [isAdd, setAdd] = useState(false);
   const [value, setValue] = useState<any>(new Set([]));
 
+  const handleDeleteClick = async () => {
+    await deleteItem(activeExercise.id);
+
+    setExercise({} as ExerciseItem);
+    setValue([]);
+    setAdd(false);
+
+    return true;
+  };
+
+  const handleSaveClick = async <T extends ExerciseType>(
+    data: CreateExercise<T>
+  ) => {
+    await saveExercise(data);
+
+    setExercise({} as ExerciseItem);
+    setValue([]);
+    setAdd(false);
+
+    return true;
+  };
+
   useEffect(() => {
+    fetchLessons();
     fetchData();
   }, []);
 
@@ -32,6 +65,8 @@ const ExercisesPage = () => {
 
   return (
     <div className="flex flex-col gap-5 items-start">
+      <LearningHeader />
+
       <h1 className="text-3xl font-semibold">Упражнения</h1>
 
       <div className="flex gap-5">
@@ -72,6 +107,7 @@ const ExercisesPage = () => {
         </Select>
 
         <Select
+          isDisabled={!activeType.key}
           className="min-w-xs"
           label="Упражнения"
           isLoading={isLoading}
@@ -112,7 +148,12 @@ const ExercisesPage = () => {
             </Button>
           )}
 
-          {isAdd && <CreateListenForm />}
+          {isAdd && (
+            <CreateListenForm
+              onSaveClick={handleSaveClick}
+              onDeleteClick={handleDeleteClick}
+            />
+          )}
         </>
       )}
     </div>

@@ -3,7 +3,7 @@ import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
-import { Plus, Save, X } from "lucide-react";
+import { Plus, Save, Trash, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import {
   Controller,
@@ -15,14 +15,34 @@ import {
 import { Checkbox } from "@heroui/checkbox";
 import { Card, CardBody } from "@heroui/card";
 import { useExerciseStore } from "@/store/useExerciseStore";
-import { ExerciseItemContent } from "@/types/exercises/model";
+import {
+  CreateExercise,
+  ExerciseItemContent,
+  ExerciseType,
+} from "@/types/exercises/model";
 import { addToast } from "@heroui/toast";
 import FileUpload from "@/components/fileUploader";
 import { AudioPlayer } from "@/components/audioPlayer";
+import { useLessonsStore } from "@/store/useLessonsStore";
+import { Delay } from "@/utils/helpers";
 
-export const CreateListenForm = () => {
+type CreateListenFormProps<T extends ExerciseType> = {
+  onSaveClick: (data: CreateExercise<T>) => Promise<boolean>;
+  onDeleteClick: () => Promise<boolean>;
+};
+
+export const CreateListenForm = <T extends ExerciseType>({
+  onSaveClick,
+  onDeleteClick,
+}: CreateListenFormProps<T>) => {
   const { activeLang } = useLangsStore();
-  const { saveExercise, activeExercise, activeType } = useExerciseStore();
+  const {
+    activeExercise,
+    activeType,
+    data: exercises,
+    isSaving,
+  } = useExerciseStore();
+  const { data: lessons } = useLessonsStore();
 
   const methods = useForm<ExerciseItemContent>({
     defaultValues: {
@@ -43,16 +63,24 @@ export const CreateListenForm = () => {
   );
 
   const onSubmit = async (data: ExerciseItemContent) => {
-    await saveExercise({
-      type: activeType.key,
+    await onSaveClick({
+      type: activeType.key as T,
       title: data.name,
       order: 0,
       content: data,
       languageId: activeLang.id,
+      lessonId: Number(data.lessonId),
+      id: activeExercise.id || undefined,
     });
 
-    reset();
-    addToast({ title: `${data.name} успешно создан`, color: "success" });
+    await Delay();
+
+    reset({ name: undefined });
+
+    addToast({
+      title: `${data.name} успешно ${activeExercise.id ? "сохранен" : "создан"}`,
+      color: "success",
+    });
   };
 
   const {
@@ -68,9 +96,21 @@ export const CreateListenForm = () => {
     append({ name: "", correct: false });
   };
 
+  const handleDeleteClick = async () => {
+    await onDeleteClick();
+    await Delay();
+
+    reset({ name: undefined });
+  };
+
   useEffect(() => {
     if (activeExercise.id) {
-      reset(activeExercise.content);
+      const exercise = exercises.find((item) => item.id === activeExercise.id);
+
+      reset({
+        ...activeExercise.content,
+        lessonId: String(exercise?.lesson?.id || ""),
+      });
     }
   }, [activeExercise]);
 
@@ -83,6 +123,28 @@ export const CreateListenForm = () => {
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-5">
+              <Controller
+                control={control}
+                name="lessonId"
+                render={({ field, fieldState }) => {
+                  return (
+                    <Select
+                      isInvalid={fieldState.invalid}
+                      className="min-w-xs"
+                      selectedKeys={[field.value]}
+                      label="Урок"
+                      onSelectionChange={(v) => {
+                        field.onChange(v.currentKey);
+                      }}
+                    >
+                      {lessons.map((lesson) => (
+                        <SelectItem key={lesson.id}>{lesson.title}</SelectItem>
+                      ))}
+                    </Select>
+                  );
+                }}
+                rules={{ required: true }}
+              />
               <div className="flex gap-4 items-stretch">
                 <Controller
                   name="name"
@@ -125,10 +187,26 @@ export const CreateListenForm = () => {
                   )}
                   rules={{ required: true }}
                 />
-                <Button type="submit" className="h-14 " color="success">
+                <Button
+                  type="submit"
+                  className="h-14 "
+                  color="success"
+                  isLoading={isSaving}
+                >
                   <Save className="size-4" />
                   Сохранить
                 </Button>
+
+                {activeExercise.id && (
+                  <Button
+                    className="h-14 "
+                    color="danger"
+                    onPress={handleDeleteClick}
+                  >
+                    <Trash className="size-4" />
+                    Удалить
+                  </Button>
+                )}
               </div>
 
               {activeType.key === "LISTENING" && (

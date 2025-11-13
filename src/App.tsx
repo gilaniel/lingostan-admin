@@ -5,6 +5,8 @@ import DefaultLayout from "./layouts/default";
 
 import LanguagesPage from "@/pages/languages";
 import ExercisesPage from "@/pages/exercises";
+import ModulesRoute from "@/pages/modules";
+import LessonsRoute from "@/pages/lessons";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/useAuthStore";
 import { AuthLayout } from "./components/authLayout";
@@ -41,6 +43,8 @@ function App() {
     <DefaultLayout>
       <Routes>
         <Route element={<LanguagesPage />} path="/languages" />
+        <Route element={<ModulesRoute />} path="/modules" />
+        <Route element={<LessonsRoute />} path="/lessons" />
         <Route element={<ExercisesPage />} path="/exercises" />
         <Route path="*" element={<Navigate to="/languages" replace />} />
       </Routes>
