@@ -191,7 +191,7 @@ export const PairsForm = () => {
                         />
                       )}
                     />
-                    <Controller
+                    {/* <Controller
                       control={control}
                       name={`pairs.${index}.left.imageUrl`}
                       render={({ field }) => (
@@ -210,7 +210,7 @@ export const PairsForm = () => {
                           )}
                         </>
                       )}
-                    />
+                    /> */}
                   </div>
                 )}
               </div>

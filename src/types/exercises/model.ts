@@ -43,12 +43,10 @@ export type ExerciseWithPairs = {
     left: {
       value: string;
       audioUrl?: string;
-      imageUrl?: string;
     };
     right: {
       value: string;
       audioUrl?: string;
-      imageUrl?: string;
     };
   }[];
 };
