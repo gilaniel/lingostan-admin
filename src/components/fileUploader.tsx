@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { apiClient } from "@/services/https";
-import { Music } from "lucide-react";
+import { ImageIcon, Music } from "lucide-react";
 
 interface FileUploadProps {
   onUpload: (url: string) => void;
   invalid: boolean;
   name: string;
+  type?: "img" | "audio";
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onUpload, invalid, name }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+  onUpload,
+  invalid,
+  name,
+  type = "audio",
+}) => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,14 +56,25 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, invalid, name }) => {
       />
       <div className="absolute w-full h-10 left-0 top-0 pointer-events-none flex gap-2 items-center justify-center text-[14px] px-2">
         {name ? (
-          <div className="overflow-hidden overflow-ellipsis whitespace-nowrap max-w-full">
-            {name.replace("/api/files/", "").split("-5423-")[0]}
+          <div className="flex items-center gap-2 w-full">
+            {type === "img" ? (
+              <ImageIcon className="size-4 flex-shrink-0" />
+            ) : (
+              <Music className="size-4 flex-shrink-0" />
+            )}
+            <div className="truncate flex-1">
+              {name.replace("/api/files/", "").split("-5423-")[0]}
+            </div>
           </div>
         ) : (
           <div className="flex gap-2 items-center justify-center">
-            <Music className="size-4" />
+            {type === "img" ? (
+              <ImageIcon className="size-4" />
+            ) : (
+              <Music className="size-4" />
+            )}
             <div className="flex items-start gap-1">
-              Дорожка <span className="text-red-400 align-super">*</span>
+              {type === "audio" ? "Дорожка" : "Изображение"}
             </div>
           </div>
         )}

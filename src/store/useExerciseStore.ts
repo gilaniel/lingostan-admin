@@ -45,6 +45,10 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
       name: "Выбери слово",
       key: ExerciseType.MULTIPLE_CHOICE,
     },
+    {
+      name: "Найди пару",
+      key: ExerciseType.MATCHING,
+    },
   ],
 
   setData: (data) =>
@@ -79,8 +83,6 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
     set({
       isSaving: false,
     });
-
-    await get().fetchData();
 
     return true;
   },

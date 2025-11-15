@@ -62,7 +62,6 @@ export const AlphabetItem = ({ index }: { index: number }) => {
             {value && <AudioPlayer audioUrl={value} />}
           </div>
         )}
-        rules={{ required: true }}
       />
     </>
   );

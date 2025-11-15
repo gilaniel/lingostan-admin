@@ -3,7 +3,7 @@ import { Button } from "@heroui/button";
 import { Select, SelectItem } from "@heroui/select";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CreateListenForm } from "./components/createListenForm";
+import { CreateForm } from "./components/createForm";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import {
   CreateExercise,
@@ -149,7 +149,7 @@ const ExercisesPage = () => {
           )}
 
           {isAdd && (
-            <CreateListenForm
+            <CreateForm
               onSaveClick={handleSaveClick}
               onDeleteClick={handleDeleteClick}
             />

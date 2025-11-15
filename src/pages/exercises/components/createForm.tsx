@@ -3,16 +3,9 @@ import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
 import { Input } from "@heroui/input";
 import { Select, SelectItem } from "@heroui/select";
-import { Plus, Save, Trash, X } from "lucide-react";
+import { Save, Trash } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import {
-  Controller,
-  FormProvider,
-  useFieldArray,
-  useForm,
-  useWatch,
-} from "react-hook-form";
-import { Checkbox } from "@heroui/checkbox";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import { Card, CardBody } from "@heroui/card";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import {
@@ -21,20 +14,42 @@ import {
   ExerciseType,
 } from "@/types/exercises/model";
 import { addToast } from "@heroui/toast";
-import FileUpload from "@/components/fileUploader";
-import { AudioPlayer } from "@/components/audioPlayer";
 import { useLessonsStore } from "@/store/useLessonsStore";
 import { Delay } from "@/utils/helpers";
+import { VariantsForm } from "./variantsForm";
+import { PairsForm } from "./pairsForm";
 
-type CreateListenFormProps<T extends ExerciseType> = {
+type CreateFormProps<T extends ExerciseType> = {
   onSaveClick: (data: CreateExercise<T>) => Promise<boolean>;
   onDeleteClick: () => Promise<boolean>;
 };
 
-export const CreateListenForm = <T extends ExerciseType>({
+const getDefaultValues = (type: ExerciseType) => {
+  const base = {
+    name: "",
+    word: "",
+    letter: undefined,
+  } as ExerciseItemContent;
+
+  if (type === "MATCHING") {
+    return {
+      ...base,
+      left: { isLetter: false, onlyAudio: false },
+      right: { isLetter: false, onlyAudio: false },
+      pairs: [],
+    } as ExerciseItemContent;
+  } else {
+    return {
+      ...base,
+      variants: [],
+    } as ExerciseItemContent;
+  }
+};
+
+export const CreateForm = <T extends ExerciseType>({
   onSaveClick,
   onDeleteClick,
-}: CreateListenFormProps<T>) => {
+}: CreateFormProps<T>) => {
   const { activeLang } = useLangsStore();
   const {
     activeExercise,
@@ -45,12 +60,7 @@ export const CreateListenForm = <T extends ExerciseType>({
   const { data: lessons } = useLessonsStore();
 
   const methods = useForm<ExerciseItemContent>({
-    defaultValues: {
-      name: "",
-      word: "",
-      letter: undefined,
-      variants: [],
-    },
+    defaultValues: getDefaultValues(activeType.key),
   });
 
   const { control, handleSubmit, reset } = methods;
@@ -83,19 +93,6 @@ export const CreateListenForm = <T extends ExerciseType>({
     });
   };
 
-  const {
-    fields: variants,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: "variants",
-  });
-
-  const addVariant = () => {
-    append({ name: "", correct: false });
-  };
-
   const handleDeleteClick = async () => {
     await onDeleteClick();
     await Delay();
@@ -115,11 +112,11 @@ export const CreateListenForm = <T extends ExerciseType>({
   }, [activeExercise]);
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardBody>
         <FormProvider {...methods}>
           <Form
-            className="flex flex-col gap-5 mt-5"
+            className="flex flex-col gap-5 mt-5 items-stretch"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-5">
@@ -161,32 +158,37 @@ export const CreateListenForm = <T extends ExerciseType>({
                   rules={{ required: true }}
                 />
 
-                <Controller
-                  name="letter"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <Select
-                      label="Буква"
-                      className="min-w-[150px] flex-1"
-                      isInvalid={fieldState.invalid}
-                      onSelectionChange={(v) => {
-                        const selectedLetter = v.currentKey;
+                {activeType.key !== "MATCHING" && (
+                  <Controller
+                    name="letter"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Select
+                        label="Буква"
+                        className="min-w-[150px] flex-1"
+                        isInvalid={fieldState.invalid}
+                        onSelectionChange={(v) => {
+                          const selectedLetter = v.currentKey;
 
-                        if (!selectedLetter) return;
+                          if (!selectedLetter) return;
 
-                        const selectedItem = alphabetMap.get(selectedLetter);
+                          const selectedItem = alphabetMap.get(selectedLetter);
 
-                        field.onChange(selectedItem);
-                      }}
-                      selectedKeys={[field.value ? field.value.letter : ""]}
-                    >
-                      {activeLang.alphabet.map((item) => (
-                        <SelectItem key={item.letter}>{item.letter}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                  rules={{ required: true }}
-                />
+                          field.onChange(selectedItem);
+                        }}
+                        selectedKeys={[field.value ? field.value.letter : ""]}
+                      >
+                        {activeLang.alphabet.map((item) => (
+                          <SelectItem key={item.letter}>
+                            {item.letter}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    )}
+                    rules={{ required: true }}
+                  />
+                )}
+
                 <Button
                   type="submit"
                   className="h-14 "
@@ -226,82 +228,13 @@ export const CreateListenForm = <T extends ExerciseType>({
               )}
             </div>
 
-            {word && letter.letter && (
+            {word && letter?.letter && (
               <ColoredLetters word={word} targetLetter={letter.letter} />
             )}
 
-            <div className="flex gap-4 flex-wrap">
-              {variants.map((item, index) => (
-                <div
-                  className="flex flex-col gap-2 bg-white dark:bg-gray-600 shadow-medium p-3 rounded-medium"
-                  key={item.id}
-                >
-                  <div className="flex gap-1 items-center">
-                    <div className="flex flex-col gap-2">
-                      <Controller
-                        name={`variants.${index}.name`}
-                        control={control}
-                        render={({ field, fieldState }) => (
-                          <Input
-                            {...field}
-                            label="Вариант ответа"
-                            labelPlacement="inside"
-                            isInvalid={fieldState.invalid}
-                          />
-                        )}
-                        rules={{ required: true }}
-                      />
-
-                      {activeType.key === "MULTIPLE_CHOICE" && (
-                        <Controller
-                          name={`variants.${index}.audioUrl`}
-                          control={control}
-                          render={({ field, fieldState }) => (
-                            <div className="flex items-center gap-2">
-                              <FileUpload
-                                onUpload={field.onChange}
-                                invalid={fieldState.invalid}
-                                name={field.value || ""}
-                              />
-                              {field.value && (
-                                <AudioPlayer audioUrl={field.value} />
-                              )}
-                            </div>
-                          )}
-                          rules={{ required: true }}
-                        />
-                      )}
-                    </div>
-
-                    <div
-                      className="p-2 rounded-full hover:bg-default-100 cursor-pointer transition-colors"
-                      onClick={() => remove(index)}
-                    >
-                      <X className="size-5 text-red-400" />
-                    </div>
-                  </div>
-
-                  <Controller
-                    name={`variants.${index}.correct`}
-                    control={control}
-                    render={({ field }) => (
-                      <Checkbox
-                        size="sm"
-                        radius="full"
-                        isSelected={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        Правильно
-                      </Checkbox>
-                    )}
-                  />
-                </div>
-              ))}
+            <div className="flex gap-4 flex-wrap w-full justify-center">
+              {activeType.key === "MATCHING" ? <PairsForm /> : <VariantsForm />}
             </div>
-
-            <Button onPress={addVariant}>
-              <Plus className="size-4" /> Вариант ответа
-            </Button>
           </Form>
         </FormProvider>
       </CardBody>

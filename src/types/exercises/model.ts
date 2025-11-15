@@ -20,11 +20,37 @@ export type ExerciseItem = {
 };
 
 export type ExerciseItemContent = {
-  letter: AlphabetItem;
+  letter?: AlphabetItem;
   name: string;
-  variants: { name: string; correct: boolean; audioUrl?: string }[];
   word?: string;
   lessonId: number | string;
+} & (ExerciseWithVariants | ExerciseWithPairs);
+
+export type ExerciseWithVariants = {
+  variants: {
+    name: string;
+    correct: boolean;
+    audioUrl?: string;
+    imageUrl?: string;
+  }[];
+};
+
+export type ExerciseWithPairs = {
+  left: { onlyAudio: boolean; isLetter: boolean };
+  right: { onlyAudio: boolean; isLetter: boolean };
+  pairs: {
+    id: string;
+    left: {
+      value: string;
+      audioUrl?: string;
+      imageUrl?: string;
+    };
+    right: {
+      value: string;
+      audioUrl?: string;
+      imageUrl?: string;
+    };
+  }[];
 };
 
 export type CreateExercise<T extends ExerciseType> = {
