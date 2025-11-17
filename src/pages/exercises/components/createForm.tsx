@@ -24,27 +24,27 @@ type CreateFormProps<T extends ExerciseType> = {
   onDeleteClick: () => Promise<boolean>;
 };
 
-const getDefaultValues = (type: ExerciseType) => {
+function getDefaultValues(type: ExerciseType) {
   const base = {
     name: "",
     word: "",
     letter: undefined,
   } as ExerciseItemContent;
 
-  if (type === "MATCHING") {
-    return {
-      ...base,
-      left: { isLetter: false, onlyAudio: false },
-      right: { isLetter: false, onlyAudio: false },
-      pairs: [],
-    } as ExerciseItemContent;
-  } else {
-    return {
-      ...base,
-      variants: [],
-    } as ExerciseItemContent;
+  switch (type) {
+    case ExerciseType.LISTENING:
+    case ExerciseType.MULTIPLE_CHOICE:
+    case ExerciseType.MULTIPLE_CHOICE_IMGS:
+      return { ...base, variants: [] };
+    case ExerciseType.MATCHING:
+      return {
+        ...base,
+        left: { isLetter: false, onlyAudio: false },
+        right: { isLetter: false, onlyAudio: false },
+        pairs: [],
+      };
   }
-};
+}
 
 export const CreateForm = <T extends ExerciseType>({
   onSaveClick,
@@ -72,6 +72,17 @@ export const CreateForm = <T extends ExerciseType>({
     [activeLang]
   );
 
+  const getForm = (type: ExerciseType) => {
+    switch (type) {
+      case "LISTENING":
+      case "MULTIPLE_CHOICE":
+      case "MULTIPLE_CHOICE_IMGS":
+        return <VariantsForm />;
+      case "MATCHING":
+        return <PairsForm />;
+    }
+  };
+
   const onSubmit = async (data: ExerciseItemContent) => {
     await onSaveClick({
       type: activeType.key as T,
@@ -88,7 +99,7 @@ export const CreateForm = <T extends ExerciseType>({
     reset({ name: undefined });
 
     addToast({
-      title: `${data.name} успешно ${activeExercise.id ? "сохранен" : "создан"}`,
+      title: `Упражнение ${data.name} успешно ${activeExercise.id ? "сохранено" : "создано"}`,
       color: "success",
     });
   };
@@ -120,29 +131,32 @@ export const CreateForm = <T extends ExerciseType>({
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-5">
-              <Controller
-                control={control}
-                name="lessonId"
-                render={({ field, fieldState }) => {
-                  return (
-                    <Select
-                      isInvalid={fieldState.invalid}
-                      className="min-w-xs"
-                      selectedKeys={[field.value]}
-                      label="Урок"
-                      onSelectionChange={(v) => {
-                        field.onChange(v.currentKey);
-                      }}
-                    >
-                      {lessons.map((lesson) => (
-                        <SelectItem key={lesson.id}>{lesson.title}</SelectItem>
-                      ))}
-                    </Select>
-                  );
-                }}
-                rules={{ required: true }}
-              />
-              <div className="flex gap-4 items-stretch">
+              <div className="flex gap-4">
+                <Controller
+                  control={control}
+                  name="lessonId"
+                  render={({ field, fieldState }) => {
+                    return (
+                      <Select
+                        isInvalid={fieldState.invalid}
+                        className="flex-1"
+                        selectedKeys={[field.value]}
+                        label="Урок"
+                        onSelectionChange={(v) => {
+                          field.onChange(v.currentKey);
+                        }}
+                      >
+                        {lessons.map((lesson) => (
+                          <SelectItem key={lesson.id}>
+                            {lesson.title}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    );
+                  }}
+                  rules={{ required: true }}
+                />
+
                 <Controller
                   name="name"
                   control={control}
@@ -151,14 +165,15 @@ export const CreateForm = <T extends ExerciseType>({
                       {...field}
                       label="Название упражнения"
                       labelPlacement="inside"
-                      className="min-w-[250px] flex-1"
+                      className="flex-1"
                       isInvalid={fieldState.invalid}
                     />
                   )}
                   rules={{ required: true }}
                 />
-
-                {activeType.key !== "MATCHING" && (
+              </div>
+              <div className="flex gap-4 items-stretch">
+                {activeType.key !== ExerciseType.MATCHING && (
                   <Controller
                     name="letter"
                     control={control}
@@ -189,6 +204,23 @@ export const CreateForm = <T extends ExerciseType>({
                   />
                 )}
 
+                {activeType.key === ExerciseType.LISTENING && (
+                  <Controller
+                    name="word"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Input
+                        {...field}
+                        className="flex-1"
+                        label="Слово"
+                        labelPlacement="inside"
+                        isInvalid={fieldState.invalid}
+                      />
+                    )}
+                    rules={{ required: true }}
+                  />
+                )}
+
                 <Button
                   type="submit"
                   className="h-14 "
@@ -210,22 +242,6 @@ export const CreateForm = <T extends ExerciseType>({
                   </Button>
                 )}
               </div>
-
-              {activeType.key === "LISTENING" && (
-                <Controller
-                  name="word"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <Input
-                      {...field}
-                      label="Слово"
-                      labelPlacement="inside"
-                      isInvalid={fieldState.invalid}
-                    />
-                  )}
-                  rules={{ required: true }}
-                />
-              )}
             </div>
 
             {word && letter?.letter && (
@@ -233,7 +249,7 @@ export const CreateForm = <T extends ExerciseType>({
             )}
 
             <div className="flex gap-4 flex-wrap w-full justify-center">
-              {activeType.key === "MATCHING" ? <PairsForm /> : <VariantsForm />}
+              {getForm(activeType.key)}
             </div>
           </Form>
         </FormProvider>
@@ -244,7 +260,7 @@ export const CreateForm = <T extends ExerciseType>({
 
 interface ColoredLettersProps {
   word: string;
-  targetLetter: string; // буква которая должна подсвечиваться (например "Аь")
+  targetLetter: string;
   color?: string;
   className?: string;
 }

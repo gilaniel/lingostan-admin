@@ -46,6 +46,10 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
       key: ExerciseType.MULTIPLE_CHOICE,
     },
     {
+      name: "Выбери картинку",
+      key: ExerciseType.MULTIPLE_CHOICE_IMGS,
+    },
+    {
       name: "Найди пару",
       key: ExerciseType.MATCHING,
     },

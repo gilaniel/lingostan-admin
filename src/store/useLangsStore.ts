@@ -36,7 +36,9 @@ export const useLangsStore = create<LangState>()(
         set({ isLoading: true });
 
         try {
-          const { data } = await apiClient.get<Lang[]>("/languages");
+          const { data } = await apiClient.get<Lang[]>("/languages", {
+            params: { withAlphabet: true },
+          });
 
           data.forEach((item) => {
             item.alphabet.sort((a, b) => a.order - b.order);

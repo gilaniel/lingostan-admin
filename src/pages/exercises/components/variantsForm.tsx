@@ -1,7 +1,7 @@
 import { AudioPlayer } from "@/components/audioPlayer";
 import FileUpload from "@/components/fileUploader";
 import { useExerciseStore } from "@/store/useExerciseStore";
-import { ExerciseItemContent } from "@/types/exercises/model";
+import { ExerciseItemContent, ExerciseType } from "@/types/exercises/model";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
@@ -27,7 +27,31 @@ export const VariantsForm = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 items-start">
+      <div className="flex flex-col gap-4 items-center">
+        {activeType.key === ExerciseType.LISTENING && (
+          <Controller
+            control={control}
+            name="imageUrl"
+            render={({ field, fieldState }) => (
+              <div className="flex flex-col gap-2 items-center">
+                <FileUpload
+                  type="img"
+                  onUpload={field.onChange}
+                  invalid={fieldState.invalid}
+                  name={field.value || ""}
+                />
+
+                {field.value && (
+                  <img
+                    className="w-[200px] object-contain object-center rounded-medium shadow-medium"
+                    src={import.meta.env.VITE_API_URL + field.value}
+                  />
+                )}
+              </div>
+            )}
+            rules={{ required: true }}
+          />
+        )}
         <div className="flex gap-4 flex-wrap">
           {variants.map((item, index) => (
             <div
@@ -36,21 +60,26 @@ export const VariantsForm = () => {
             >
               <div className="flex gap-1 items-center">
                 <div className="flex flex-col gap-2">
-                  <Controller
-                    name={`variants.${index}.name`}
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <Input
-                        {...field}
-                        label="Вариант ответа"
-                        labelPlacement="inside"
-                        isInvalid={fieldState.invalid}
-                      />
-                    )}
-                    rules={{ required: true }}
-                  />
+                  {activeType.key !== ExerciseType.MULTIPLE_CHOICE_IMGS && (
+                    <Controller
+                      name={`variants.${index}.name`}
+                      control={control}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          {...field}
+                          label="Вариант ответа"
+                          labelPlacement="inside"
+                          isInvalid={fieldState.invalid}
+                        />
+                      )}
+                      rules={{ required: true }}
+                    />
+                  )}
 
-                  {activeType.key === "MULTIPLE_CHOICE" && (
+                  {[
+                    ExerciseType.MULTIPLE_CHOICE,
+                    ExerciseType.MULTIPLE_CHOICE_IMGS,
+                  ].includes(activeType.key) && (
                     <Controller
                       name={`variants.${index}.audioUrl`}
                       control={control}
@@ -67,6 +96,29 @@ export const VariantsForm = () => {
                         </div>
                       )}
                       rules={{ required: true }}
+                    />
+                  )}
+
+                  {activeType.key === ExerciseType.MULTIPLE_CHOICE_IMGS && (
+                    <Controller
+                      control={control}
+                      name={`variants.${index}.imageUrl`}
+                      render={({ field }) => (
+                        <div className="flex flex-col gap-1">
+                          {field.value && (
+                            <img
+                              className="object-cover object-center w-full h-[200px] rounded-medium"
+                              src={import.meta.env.VITE_API_URL + field.value}
+                            />
+                          )}
+                          <FileUpload
+                            type="img"
+                            name={field.value || ""}
+                            onUpload={field.onChange}
+                            invalid={false}
+                          />
+                        </div>
+                      )}
                     />
                   )}
                 </div>

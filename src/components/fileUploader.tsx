@@ -47,22 +47,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
     <div
       className={`relative max-w-[200px] bg-default-100 hover:bg-default-200 transition-colors rounded-medium ${invalid ? "!bg-danger-50 hover:!bg-danger-100" : ""} flex-1`}
     >
-      <input
-        type="file"
-        onChange={handleFileChange}
-        disabled={isUploading}
-        accept="audio/*,image/*"
-        className="opacity-0 w-full h-10 cursor-pointer"
-      />
+      <div className="overflow-hidden">
+        <input
+          type="file"
+          onChange={handleFileChange}
+          disabled={isUploading}
+          accept="audio/*,image/*"
+          className="opacity-0 w-[400px] h-10 cursor-pointer translate-x-[-150px]"
+        />
+      </div>
       <div className="absolute w-full h-10 left-0 top-0 pointer-events-none flex gap-2 items-center justify-center text-[14px] px-2">
         {name ? (
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex items-center gap-2 w-full justify-center">
             {type === "img" ? (
               <ImageIcon className="size-4 flex-shrink-0" />
             ) : (
               <Music className="size-4 flex-shrink-0" />
             )}
-            <div className="truncate flex-1">
+            <div className="truncate">
               {name.replace("/api/files/", "").split("-5423-")[0]}
             </div>
           </div>

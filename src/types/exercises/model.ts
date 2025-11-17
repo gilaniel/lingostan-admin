@@ -3,6 +3,7 @@ import { LessonsItem } from "../lessons/model";
 
 export enum ExerciseType {
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
+  MULTIPLE_CHOICE_IMGS = "MULTIPLE_CHOICE_IMGS",
   MATCHING = "MATCHING",
   TRANSLATION = "TRANSLATION",
   LISTENING = "LISTENING",
@@ -24,9 +25,11 @@ export type ExerciseItemContent = {
   name: string;
   word?: string;
   lessonId: number | string;
+  imageUrl?: string;
 } & (ExerciseWithVariants | ExerciseWithPairs);
 
 export type ExerciseWithVariants = {
+  type: "variants";
   variants: {
     name: string;
     correct: boolean;
@@ -36,6 +39,7 @@ export type ExerciseWithVariants = {
 };
 
 export type ExerciseWithPairs = {
+  type: "pairs";
   left: { onlyAudio: boolean; isLetter: boolean };
   right: { onlyAudio: boolean; isLetter: boolean };
   pairs: {
