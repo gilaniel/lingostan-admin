@@ -17,7 +17,7 @@ export type ExerciseItem = {
   id: number;
   title: string;
   content: ExerciseItemContent;
-  lesson: LessonsItem;
+  lessonId: number;
 };
 
 export type ExerciseItemContent = {

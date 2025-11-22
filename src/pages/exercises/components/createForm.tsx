@@ -117,7 +117,7 @@ export const CreateForm = <T extends ExerciseType>({
 
       reset({
         ...activeExercise.content,
-        lessonId: String(exercise?.lesson?.id || ""),
+        lessonId: String(exercise?.lessonId || ""),
       });
     }
   }, [activeExercise]);

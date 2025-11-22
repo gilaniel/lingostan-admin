@@ -167,7 +167,7 @@ export const PairsForm = () => {
                         <>
                           <Input
                             {...field}
-                            label="Левый"
+                            label="Слово"
                             labelPlacement="inside"
                             isInvalid={fieldState.invalid}
                           />
@@ -252,7 +252,7 @@ export const PairsForm = () => {
                         <>
                           <Input
                             {...field}
-                            label="Правый"
+                            label="Слово"
                             labelPlacement="inside"
                             isInvalid={fieldState.invalid}
                           />

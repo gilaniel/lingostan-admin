@@ -1,5 +1,4 @@
 import { Difficult } from "..";
-import { LessonsItem } from "../lessons/model";
 
 export type ModulesItem = {
   id: number;
@@ -11,5 +10,5 @@ export type ModulesItem = {
   estimatedDuration?: number;
   languageId: number;
   lessonIds?: number[] | string[];
-  lessons: LessonsItem[];
+  lessons: number[];
 };

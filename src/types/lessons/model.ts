@@ -1,6 +1,3 @@
-import { ExerciseItem } from "../exercises/model";
-import { ModulesItem } from "../modules/model";
-
 export type LessonsItem = {
   id: number;
   title: string;
@@ -10,6 +7,6 @@ export type LessonsItem = {
   videoUrl?: string;
   moduleId: number | string;
   exerciseIds?: number[] | string[];
-  mods: ModulesItem;
-  exercises: ExerciseItem[];
+  modsId: number;
+  exercises: number[];
 };

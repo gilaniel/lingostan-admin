@@ -60,21 +60,23 @@ export const VariantsForm = () => {
             >
               <div className="flex gap-1 items-center">
                 <div className="flex flex-col gap-2">
-                  {activeType.key !== ExerciseType.MULTIPLE_CHOICE_IMGS && (
-                    <Controller
-                      name={`variants.${index}.name`}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <Input
-                          {...field}
-                          label="Вариант ответа"
-                          labelPlacement="inside"
-                          isInvalid={fieldState.invalid}
-                        />
-                      )}
-                      rules={{ required: true }}
-                    />
-                  )}
+                  <Controller
+                    name={`variants.${index}.name`}
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Input
+                        {...field}
+                        label={
+                          activeType.key === ExerciseType.LISTENING
+                            ? "Буква"
+                            : "Слово"
+                        }
+                        labelPlacement="inside"
+                        isInvalid={fieldState.invalid}
+                      />
+                    )}
+                    rules={{ required: true }}
+                  />
 
                   {[
                     ExerciseType.MULTIPLE_CHOICE,
@@ -103,7 +105,7 @@ export const VariantsForm = () => {
                     <Controller
                       control={control}
                       name={`variants.${index}.imageUrl`}
-                      render={({ field }) => (
+                      render={({ field, fieldState }) => (
                         <div className="flex flex-col gap-1">
                           {field.value && (
                             <img
@@ -115,10 +117,11 @@ export const VariantsForm = () => {
                             type="img"
                             name={field.value || ""}
                             onUpload={field.onChange}
-                            invalid={false}
+                            invalid={fieldState.invalid}
                           />
                         </div>
                       )}
+                      rules={{ required: true }}
                     />
                   )}
                 </div>
