@@ -1,5 +1,4 @@
 import { AlphabetItem } from "../langs/model";
-import { LessonsItem } from "../lessons/model";
 
 export enum ExerciseType {
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
