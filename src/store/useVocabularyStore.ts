@@ -19,7 +19,7 @@ export const useVocabularyStore = create<Vocabulary>((set, get) => ({
     );
 
     set({
-      data,
+      data: data.sort((a, b) => a.word.localeCompare(b.word)),
     });
   },
 
