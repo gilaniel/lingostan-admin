@@ -7,6 +7,7 @@ import LanguagesPage from "@/pages/languages";
 import ExercisesPage from "@/pages/exercises";
 import ModulesRoute from "@/pages/modules";
 import LessonsRoute from "@/pages/lessons";
+import VocabularyRoute from "@/pages/vocabulary";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/useAuthStore";
 import { AuthLayout } from "./components/authLayout";
@@ -46,6 +47,7 @@ function App() {
         <Route element={<ModulesRoute />} path="/modules" />
         <Route element={<LessonsRoute />} path="/lessons" />
         <Route element={<ExercisesPage />} path="/exercises" />
+        <Route element={<VocabularyRoute />} path="/vocabulary" />
         <Route path="*" element={<Navigate to="/languages" replace />} />
       </Routes>
     </DefaultLayout>

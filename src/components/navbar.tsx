@@ -37,6 +37,10 @@ const menuItems = [
     name: "Упражнения",
     path: "/exercises",
   },
+  {
+    name: "Словарь",
+    path: "/vocabulary",
+  },
 ];
 
 export const Navbar = () => {

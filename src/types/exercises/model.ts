@@ -30,7 +30,7 @@ export type ExerciseItemContent = {
 export type ExerciseWithVariants = {
   type: "variants";
   variants: {
-    name: string;
+    word: string;
     correct: boolean;
     audioUrl?: string;
     imageUrl?: string;

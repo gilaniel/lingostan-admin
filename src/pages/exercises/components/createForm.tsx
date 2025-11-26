@@ -204,23 +204,6 @@ export const CreateForm = <T extends ExerciseType>({
                   />
                 )}
 
-                {activeType.key === ExerciseType.LISTENING && (
-                  <Controller
-                    name="word"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <Input
-                        {...field}
-                        className="flex-1"
-                        label="Слово"
-                        labelPlacement="inside"
-                        isInvalid={fieldState.invalid}
-                      />
-                    )}
-                    rules={{ required: true }}
-                  />
-                )}
-
                 <Button
                   type="submit"
                   className="h-14 "

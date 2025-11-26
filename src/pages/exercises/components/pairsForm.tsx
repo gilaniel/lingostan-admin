@@ -56,7 +56,6 @@ export const PairsForm = () => {
                     name="left.isLetter"
                     render={({ field }) => (
                       <Checkbox
-                        isDisabled={right.isLetter}
                         isSelected={left.isLetter}
                         onValueChange={field.onChange}
                         classNames={{
@@ -93,7 +92,6 @@ export const PairsForm = () => {
                     name="right.isLetter"
                     render={({ field }) => (
                       <Checkbox
-                        isDisabled={left.isLetter}
                         isSelected={right.isLetter}
                         onValueChange={field.onChange}
                         classNames={{

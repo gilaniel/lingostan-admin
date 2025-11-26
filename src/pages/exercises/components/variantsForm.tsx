@@ -1,16 +1,15 @@
-import { AudioPlayer } from "@/components/audioPlayer";
-import FileUpload from "@/components/fileUploader";
-import { useExerciseStore } from "@/store/useExerciseStore";
-import { ExerciseItemContent, ExerciseType } from "@/types/exercises/model";
+import { useVocabularyStore } from "@/store/useVocabularyStore";
+import { ExerciseItemContent } from "@/types/exercises/model";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
-import { Input } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
 import { Plus, X } from "lucide-react";
+import { useMemo } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 export const VariantsForm = () => {
-  const { control } = useFormContext<ExerciseItemContent>();
-  const { activeType } = useExerciseStore();
+  const { control, setValue } = useFormContext<ExerciseItemContent>();
+  const { data } = useVocabularyStore();
 
   const {
     fields: variants,
@@ -22,36 +21,17 @@ export const VariantsForm = () => {
   });
 
   const addVariant = () => {
-    append({ name: "", correct: false });
+    append({ word: "", correct: false });
   };
+
+  const vocabularyMap = useMemo(
+    () => new Map(data.map((item) => [item.word, item])),
+    []
+  );
 
   return (
     <>
       <div className="flex flex-col gap-4 items-center">
-        {activeType.key === ExerciseType.LISTENING && (
-          <Controller
-            control={control}
-            name="imageUrl"
-            render={({ field, fieldState }) => (
-              <div className="flex flex-col gap-2 items-center">
-                <FileUpload
-                  type="img"
-                  onUpload={field.onChange}
-                  invalid={fieldState.invalid}
-                  name={field.value || ""}
-                />
-
-                {field.value && (
-                  <img
-                    className="w-[200px] object-contain object-center rounded-medium shadow-medium"
-                    src={import.meta.env.VITE_API_URL + field.value}
-                  />
-                )}
-              </div>
-            )}
-            rules={{ required: true }}
-          />
-        )}
         <div className="flex gap-4 flex-wrap">
           {variants.map((item, index) => (
             <div
@@ -61,69 +41,40 @@ export const VariantsForm = () => {
               <div className="flex gap-1 items-center">
                 <div className="flex flex-col gap-2">
                   <Controller
-                    name={`variants.${index}.name`}
+                    name={`variants.${index}.word`}
                     control={control}
                     render={({ field, fieldState }) => (
-                      <Input
-                        {...field}
-                        label={
-                          activeType.key === ExerciseType.LISTENING
-                            ? "Буква"
-                            : "Слово"
-                        }
-                        labelPlacement="inside"
+                      <Select
+                        label="Слово"
+                        className="min-w-[150px] flex-1"
                         isInvalid={fieldState.invalid}
-                      />
+                        onSelectionChange={(v) => {
+                          const selected = v.currentKey;
+
+                          if (!selected) return;
+
+                          const selectedItem = vocabularyMap.get(selected);
+
+                          field.onChange(selectedItem?.word);
+
+                          setValue(
+                            `variants.${index}.audioUrl`,
+                            selectedItem?.audioUrl
+                          );
+                          setValue(
+                            `variants.${index}.imageUrl`,
+                            selectedItem?.imageUrl
+                          );
+                        }}
+                        selectedKeys={[field.value || ""]}
+                      >
+                        {data.map((item) => (
+                          <SelectItem key={item.word}>{item.word}</SelectItem>
+                        ))}
+                      </Select>
                     )}
                     rules={{ required: true }}
                   />
-
-                  {[
-                    ExerciseType.MULTIPLE_CHOICE,
-                    ExerciseType.MULTIPLE_CHOICE_IMGS,
-                  ].includes(activeType.key) && (
-                    <Controller
-                      name={`variants.${index}.audioUrl`}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <div className="flex items-center gap-2">
-                          <FileUpload
-                            onUpload={field.onChange}
-                            invalid={fieldState.invalid}
-                            name={field.value || ""}
-                          />
-                          {field.value && (
-                            <AudioPlayer audioUrl={field.value} />
-                          )}
-                        </div>
-                      )}
-                      rules={{ required: true }}
-                    />
-                  )}
-
-                  {activeType.key === ExerciseType.MULTIPLE_CHOICE_IMGS && (
-                    <Controller
-                      control={control}
-                      name={`variants.${index}.imageUrl`}
-                      render={({ field, fieldState }) => (
-                        <div className="flex flex-col gap-1">
-                          {field.value && (
-                            <img
-                              className="object-cover object-center w-full h-[200px] rounded-medium"
-                              src={import.meta.env.VITE_API_URL + field.value}
-                            />
-                          )}
-                          <FileUpload
-                            type="img"
-                            name={field.value || ""}
-                            onUpload={field.onChange}
-                            invalid={fieldState.invalid}
-                          />
-                        </div>
-                      )}
-                      rules={{ required: true }}
-                    />
-                  )}
                 </div>
 
                 <div

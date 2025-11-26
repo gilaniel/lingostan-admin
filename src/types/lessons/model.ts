@@ -8,5 +8,6 @@ export type LessonsItem = {
   moduleId: number | string;
   exerciseIds?: number[] | string[];
   modsId: number;
+  languageId: number;
   exercises: number[];
 };

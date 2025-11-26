@@ -12,10 +12,12 @@ import {
 } from "@/types/exercises/model";
 import { useLessonsStore } from "@/store/useLessonsStore";
 import { LearningHeader } from "@/components/learningHeader";
+import { useVocabularyStore } from "@/store/useVocabularyStore";
 
 const ExercisesPage = () => {
   const { langs, activeLang, setACtiveLang } = useLangsStore();
   const { fetchData: fetchLessons } = useLessonsStore();
+  const { fetchData: fetchVocabulary } = useVocabularyStore();
   const {
     fetchData,
     data: exercises,
@@ -55,6 +57,7 @@ const ExercisesPage = () => {
   };
 
   useEffect(() => {
+    fetchVocabulary(activeLang.id);
     fetchLessons();
     fetchData();
   }, []);
