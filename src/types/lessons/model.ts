@@ -1,5 +1,5 @@
 export type LessonsItem = {
-  id: number;
+  id?: number;
   title: string;
   description: string;
   order: number;
@@ -7,7 +7,6 @@ export type LessonsItem = {
   videoUrl?: string;
   moduleId: number | string;
   exerciseIds?: number[] | string[];
-  modsId: number;
   languageId: number;
-  exercises: number[];
+  exercises?: number[];
 };

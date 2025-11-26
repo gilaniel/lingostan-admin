@@ -47,7 +47,9 @@ const LessonsRoute = () => {
 
   const onSubmit = async (data: LessonsItem) => {
     await saveLesson({
-      ...data,
+      id: data.id || undefined,
+      description: data.description,
+      title: data.title,
       order: 0,
       exerciseIds: data.exerciseIds?.map((item) => Number(item)),
       moduleId: Number(data.moduleId),
@@ -65,7 +67,7 @@ const LessonsRoute = () => {
   };
 
   const handleDeleteClick = async () => {
-    await deleteLesson(id);
+    await deleteLesson(id!);
 
     addToast({ title: `Урок удалён`, color: "success" });
 
@@ -121,8 +123,8 @@ const LessonsRoute = () => {
 
               reset({
                 ...lesson,
-                moduleId: String(lesson?.modsId || ""),
-                exerciseIds: lesson?.exercises.map((item) => String(item)),
+                moduleId: String(lesson?.moduleId || ""),
+                exerciseIds: lesson?.exerciseIds?.map((item) => String(item)),
               });
             }}
             isLoading={isLoading}
