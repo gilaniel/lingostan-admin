@@ -199,6 +199,7 @@ export const CreateForm = <T extends ExerciseType>({
                     control={control}
                     render={({ field, fieldState }) => (
                       <HeroSelect
+                        isVirtualized={false}
                         label="Буква"
                         className="min-w-[150px] flex-1"
                         isInvalid={fieldState.invalid}

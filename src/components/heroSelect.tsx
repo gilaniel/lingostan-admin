@@ -45,6 +45,9 @@ export const HeroSelect = ({
     <Select
       className={className}
       scrollRef={listboxRef}
+      popoverProps={{
+        placement: "bottom-end",
+      }}
       listboxProps={{
         emptyContent: emptyMessage,
         ...listboxProps,

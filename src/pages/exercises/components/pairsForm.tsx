@@ -137,6 +137,7 @@ export const PairsForm = () => {
                     <div className="w-[200px]">
                       {left && left.isLetter ? (
                         <HeroSelect
+                          isVirtualized={false}
                           label="Буква"
                           className="min-w-[150px] flex-1"
                           isInvalid={fieldState.invalid}
@@ -222,6 +223,7 @@ export const PairsForm = () => {
                     <div className="w-[200px]">
                       {right && right.isLetter ? (
                         <HeroSelect
+                          isVirtualized={false}
                           label="Буква"
                           className="min-w-[150px] flex-1"
                           isInvalid={fieldState.invalid}
