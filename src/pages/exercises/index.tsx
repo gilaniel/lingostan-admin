@@ -143,7 +143,7 @@ const ExercisesPage = () => {
           onSelectionChange={(v) => {
             setValue(v);
             setAdd(true);
-
+            debugger;
             setExercise(
               exercises.find((item) => String(item.id) === v.currentKey)!
             );
