@@ -17,6 +17,7 @@ export type ExerciseItem = {
   title: string;
   content: ExerciseItemContent;
   lessonId: number;
+  order: number;
 };
 
 export type ExerciseItemContent = {
@@ -25,6 +26,7 @@ export type ExerciseItemContent = {
   word?: string;
   lessonId: number | string;
   imageUrl?: string;
+  order: number;
 } & (ExerciseWithVariants | ExerciseWithPairs);
 
 export type ExerciseWithVariants = {

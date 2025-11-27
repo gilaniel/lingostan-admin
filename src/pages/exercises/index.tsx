@@ -1,8 +1,8 @@
 import { useLangsStore } from "@/store/useLangsStore";
 import { Button } from "@heroui/button";
-import { Select, SelectItem } from "@heroui/select";
+import { Select, SelectItem, SelectSection } from "@heroui/select";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CreateForm } from "./components/createForm";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import {
@@ -16,7 +16,7 @@ import { useVocabularyStore } from "@/store/useVocabularyStore";
 
 const ExercisesPage = () => {
   const { langs, activeLang, setACtiveLang } = useLangsStore();
-  const { fetchData: fetchLessons } = useLessonsStore();
+  const { fetchData: fetchLessons, data: lessons } = useLessonsStore();
   const { fetchData: fetchVocabulary } = useVocabularyStore();
   const {
     fetchData,
@@ -55,6 +55,27 @@ const ExercisesPage = () => {
 
     return true;
   };
+
+  const groupedExercises = useMemo(
+    () =>
+      exercises.reduce(
+        (acc, exercise) => {
+          const lessonId = exercise.lessonId;
+
+          if (!acc[lessonId]) {
+            acc[lessonId] = [];
+          }
+
+          acc[lessonId].push(exercise);
+
+          acc[lessonId].sort((a, b) => a.order - b.order);
+
+          return acc;
+        },
+        {} as Record<number, ExerciseItem[]>
+      ),
+    [exercises]
+  );
 
   useEffect(() => {
     fetchVocabulary(activeLang.id);
@@ -114,6 +135,9 @@ const ExercisesPage = () => {
           className="min-w-xs"
           label="Упражнения"
           isLoading={isLoading}
+          scrollShadowProps={{
+            isEnabled: false,
+          }}
           selectedKeys={value}
           onSelectionChange={(v) => {
             setValue(v);
@@ -124,9 +148,24 @@ const ExercisesPage = () => {
             );
           }}
         >
-          {exercises.map((exercise) => (
-            <SelectItem key={exercise.id}>{exercise.title}</SelectItem>
-          ))}
+          {lessons.map((lesson) => {
+            if (!groupedExercises[lesson.id!]) return null;
+
+            return (
+              <SelectSection
+                key={lesson.id}
+                classNames={{
+                  heading:
+                    "flex w-full sticky top-1 z-20 py-1.5 px-2 bg-default-100 shadow-small rounded-small",
+                }}
+                title={lesson.title}
+              >
+                {groupedExercises[lesson.id!].map((exercise) => (
+                  <SelectItem key={exercise.id}>{exercise.title}</SelectItem>
+                ))}
+              </SelectSection>
+            );
+          })}
         </Select>
       </div>
 

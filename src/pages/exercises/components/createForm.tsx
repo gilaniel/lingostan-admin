@@ -29,6 +29,7 @@ function getDefaultValues(type: ExerciseType) {
     name: "",
     word: "",
     letter: undefined,
+    order: 1,
   } as ExerciseItemContent;
 
   switch (type) {
@@ -87,7 +88,7 @@ export const CreateForm = <T extends ExerciseType>({
     await onSaveClick({
       type: activeType.key as T,
       title: data.name,
-      order: 0,
+      order: Number(data.order),
       content: data,
       languageId: activeLang.id,
       lessonId: Number(data.lessonId),
@@ -167,6 +168,24 @@ export const CreateForm = <T extends ExerciseType>({
                       labelPlacement="inside"
                       className="flex-1"
                       isInvalid={fieldState.invalid}
+                    />
+                  )}
+                  rules={{ required: true }}
+                />
+
+                <Controller
+                  name="order"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      label="Номер"
+                      labelPlacement="inside"
+                      className="w-[100px]"
+                      isInvalid={fieldState.invalid}
+                      type="number"
+                      min={1}
+                      value={String(field.value)}
+                      onChange={field.onChange}
                     />
                   )}
                   rules={{ required: true }}

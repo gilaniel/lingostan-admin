@@ -40,6 +40,7 @@ const LessonsRoute = () => {
       title: "",
       description: "",
       exerciseIds: [],
+      order: 1,
     },
   });
 
@@ -50,7 +51,7 @@ const LessonsRoute = () => {
       id: data.id || undefined,
       description: data.description,
       title: data.title,
-      order: 0,
+      order: Number(data.order),
       exerciseIds: data.exerciseIds?.map((item) => Number(item)),
       moduleId: Number(data.moduleId),
       languageId: activeLang.id,
@@ -144,7 +145,7 @@ const LessonsRoute = () => {
               }
               return !prev;
             });
-            reset({ title: "" });
+            reset({ title: "", order: 1 });
           }}
         >
           {isAdd ? (
@@ -158,31 +159,47 @@ const LessonsRoute = () => {
         </Button>
       </div>
 
-      {/* <div className="flex">
-        <Button color="danger" onPress={deleteLessons}>
-          Удалить уроки
-        </Button>
-      </div> */}
-
       {isAdd && (
         <Form
           className="flex flex-col gap-5 mt-5"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Controller
-            name="title"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Input
-                {...field}
-                label="Название урока"
-                labelPlacement="inside"
-                className="min-w-[250px] flex-1"
-                isInvalid={fieldState.invalid}
-              />
-            )}
-            rules={{ required: true }}
-          />
+          <div className="flex gap-4 w-full">
+            <Controller
+              name="title"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Input
+                  {...field}
+                  label="Название урока"
+                  labelPlacement="inside"
+                  className="flex-1"
+                  isInvalid={fieldState.invalid}
+                />
+              )}
+              rules={{ required: true }}
+            />
+
+            <Controller
+              name="order"
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <Input
+                    label="Номер"
+                    labelPlacement="inside"
+                    className="w-[100px]"
+                    isInvalid={fieldState.invalid}
+                    type="number"
+                    min={1}
+                    value={String(field.value)}
+                    onChange={field.onChange}
+                  />
+                );
+              }}
+              rules={{ required: true }}
+            />
+          </div>
 
           <Controller
             name="description"
