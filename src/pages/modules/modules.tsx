@@ -1,3 +1,4 @@
+import { HeroSelect } from "@/components/heroSelect";
 import { LearningHeader } from "@/components/learningHeader";
 import { useLangsStore } from "@/store/useLangsStore";
 import { useLessonsStore } from "@/store/useLessonsStore";
@@ -7,7 +8,7 @@ import { Delay } from "@/utils/helpers";
 import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
+import { SelectItem } from "@heroui/select";
 import { addToast } from "@heroui/toast";
 import { Plus, Save, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -83,7 +84,7 @@ const ModulesRoute = () => {
 
       <div className="flex gap-4 justify-between items-center">
         <div className="flex gap-4 flex-1">
-          <Select
+          <HeroSelect
             className="min-w-xs flex-1"
             defaultSelectedKeys={[activeLang.code]}
             label="Язык"
@@ -97,9 +98,9 @@ const ModulesRoute = () => {
             {langs.map((lang) => (
               <SelectItem key={lang.code}>{lang.name}</SelectItem>
             ))}
-          </Select>
+          </HeroSelect>
 
-          <Select
+          <HeroSelect
             listboxProps={{
               emptyContent: "Нет данных",
             }}
@@ -124,7 +125,7 @@ const ModulesRoute = () => {
             {data.map((lesson) => (
               <SelectItem key={lesson.id}>{lesson.title}</SelectItem>
             ))}
-          </Select>
+          </HeroSelect>
         </div>
 
         <Button
@@ -189,7 +190,7 @@ const ModulesRoute = () => {
             name="lessonIds"
             control={control}
             render={({ field, fieldState }) => (
-              <Select
+              <HeroSelect
                 listboxProps={{
                   emptyContent: "Нет данных",
                 }}
@@ -208,7 +209,7 @@ const ModulesRoute = () => {
                 {lessons.map((lesson) => (
                   <SelectItem key={lesson.id}>{lesson.title}</SelectItem>
                 ))}
-              </Select>
+              </HeroSelect>
             )}
           />
 

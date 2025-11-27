@@ -1,10 +1,11 @@
 import FileUpload from "@/components/fileUploader";
+import { HeroSelect } from "@/components/heroSelect";
 import { useLangsStore } from "@/store/useLangsStore";
 import { ExerciseItemContent } from "@/types/exercises/model";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
+import { SelectItem } from "@heroui/select";
 import { Plus, X } from "lucide-react";
 import { useMemo } from "react";
 import {
@@ -135,7 +136,7 @@ export const PairsForm = () => {
                   render={({ field, fieldState }) => (
                     <div className="w-[200px]">
                       {left && left.isLetter ? (
-                        <Select
+                        <HeroSelect
                           label="Буква"
                           className="min-w-[150px] flex-1"
                           isInvalid={fieldState.invalid}
@@ -160,7 +161,7 @@ export const PairsForm = () => {
                               {item.letter}
                             </SelectItem>
                           ))}
-                        </Select>
+                        </HeroSelect>
                       ) : (
                         <>
                           <Input
@@ -220,7 +221,7 @@ export const PairsForm = () => {
                   render={({ field, fieldState }) => (
                     <div className="w-[200px]">
                       {right && right.isLetter ? (
-                        <Select
+                        <HeroSelect
                           label="Буква"
                           className="min-w-[150px] flex-1"
                           isInvalid={fieldState.invalid}
@@ -245,7 +246,7 @@ export const PairsForm = () => {
                               {item.letter}
                             </SelectItem>
                           ))}
-                        </Select>
+                        </HeroSelect>
                       ) : (
                         <>
                           <Input

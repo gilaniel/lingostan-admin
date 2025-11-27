@@ -1,6 +1,6 @@
 import { useLangsStore } from "@/store/useLangsStore";
 import { Button } from "@heroui/button";
-import { Select, SelectItem, SelectSection } from "@heroui/select";
+import { SelectItem, SelectSection } from "@heroui/select";
 import { Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { CreateForm } from "./components/createForm";
@@ -13,6 +13,7 @@ import {
 import { useLessonsStore } from "@/store/useLessonsStore";
 import { LearningHeader } from "@/components/learningHeader";
 import { useVocabularyStore } from "@/store/useVocabularyStore";
+import { HeroSelect } from "@/components/heroSelect";
 
 const ExercisesPage = () => {
   const { langs, activeLang, setACtiveLang } = useLangsStore();
@@ -94,7 +95,7 @@ const ExercisesPage = () => {
       <h1 className="text-3xl font-semibold">Упражнения</h1>
 
       <div className="flex gap-5">
-        <Select
+        <HeroSelect
           className="min-w-xs"
           defaultSelectedKeys={[activeLang.code]}
           label="Язык"
@@ -109,9 +110,9 @@ const ExercisesPage = () => {
           {langs.map((lang) => (
             <SelectItem key={lang.code}>{lang.name}</SelectItem>
           ))}
-        </Select>
+        </HeroSelect>
 
-        <Select
+        <HeroSelect
           className="min-w-xs"
           label="Тип упражнения"
           selectedKeys={[activeType.key]}
@@ -128,9 +129,9 @@ const ExercisesPage = () => {
           {types.map((type) => (
             <SelectItem key={type.key}>{type.name}</SelectItem>
           ))}
-        </Select>
+        </HeroSelect>
 
-        <Select
+        <HeroSelect
           isDisabled={!activeType.key}
           className="min-w-xs"
           label="Упражнения"
@@ -166,7 +167,7 @@ const ExercisesPage = () => {
               </SelectSection>
             );
           })}
-        </Select>
+        </HeroSelect>
       </div>
 
       {activeLang.code && (

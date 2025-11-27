@@ -1,3 +1,4 @@
+import { HeroSelect } from "@/components/heroSelect";
 import { LearningHeader } from "@/components/learningHeader";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import { useLangsStore } from "@/store/useLangsStore";
@@ -8,7 +9,7 @@ import { Delay } from "@/utils/helpers";
 import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
 import { Input, Textarea } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
+import { SelectItem } from "@heroui/select";
 import { addToast } from "@heroui/toast";
 import { Plus, Save, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -88,7 +89,7 @@ const LessonsRoute = () => {
 
       <div className="flex gap-4 justify-between items-center">
         <div className="flex gap-4 flex-1">
-          <Select
+          <HeroSelect
             className="min-w-xs flex-1"
             defaultSelectedKeys={isLangsLoading ? [] : [activeLang.code]}
             label="Язык"
@@ -103,9 +104,9 @@ const LessonsRoute = () => {
             {langs.map((lang) => (
               <SelectItem key={lang.code}>{lang.name}</SelectItem>
             ))}
-          </Select>
+          </HeroSelect>
 
-          <Select
+          <HeroSelect
             listboxProps={{
               emptyContent: "Нет данных",
             }}
@@ -133,7 +134,7 @@ const LessonsRoute = () => {
             {data.map((lesson) => (
               <SelectItem key={lesson.id}>{lesson.title}</SelectItem>
             ))}
-          </Select>
+          </HeroSelect>
         </div>
 
         <Button
@@ -221,7 +222,7 @@ const LessonsRoute = () => {
             name="moduleId"
             control={control}
             render={({ field, fieldState }) => (
-              <Select
+              <HeroSelect
                 listboxProps={{
                   emptyContent: "Нет данных",
                 }}
@@ -236,7 +237,7 @@ const LessonsRoute = () => {
                 {modules.map((module) => (
                   <SelectItem key={module.id}>{module.title}</SelectItem>
                 ))}
-              </Select>
+              </HeroSelect>
             )}
             rules={{ required: true }}
           />
@@ -245,7 +246,7 @@ const LessonsRoute = () => {
             name="exerciseIds"
             control={control}
             render={({ field, fieldState }) => (
-              <Select
+              <HeroSelect
                 listboxProps={{
                   emptyContent: "Нет данных",
                 }}
@@ -264,7 +265,7 @@ const LessonsRoute = () => {
                 {exercises.map((exercise) => (
                   <SelectItem key={exercise.id}>{exercise.title}</SelectItem>
                 ))}
-              </Select>
+              </HeroSelect>
             )}
           />
           <div className="flex gap-4">

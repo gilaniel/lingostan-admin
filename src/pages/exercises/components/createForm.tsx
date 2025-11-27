@@ -2,7 +2,7 @@ import { useLangsStore } from "@/store/useLangsStore";
 import { Button } from "@heroui/button";
 import { Form } from "@heroui/form";
 import { Input } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
+import { SelectItem } from "@heroui/select";
 import { Save, Trash } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
@@ -18,6 +18,7 @@ import { useLessonsStore } from "@/store/useLessonsStore";
 import { Delay } from "@/utils/helpers";
 import { VariantsForm } from "./variantsForm";
 import { PairsForm } from "./pairsForm";
+import { HeroSelect } from "@/components/heroSelect";
 
 type CreateFormProps<T extends ExerciseType> = {
   onSaveClick: (data: CreateExercise<T>) => Promise<boolean>;
@@ -138,7 +139,7 @@ export const CreateForm = <T extends ExerciseType>({
                   name="lessonId"
                   render={({ field, fieldState }) => {
                     return (
-                      <Select
+                      <HeroSelect
                         isInvalid={fieldState.invalid}
                         className="flex-1"
                         selectedKeys={[field.value]}
@@ -152,7 +153,7 @@ export const CreateForm = <T extends ExerciseType>({
                             {lesson.title}
                           </SelectItem>
                         ))}
-                      </Select>
+                      </HeroSelect>
                     );
                   }}
                   rules={{ required: true }}
@@ -197,7 +198,7 @@ export const CreateForm = <T extends ExerciseType>({
                     name="letter"
                     control={control}
                     render={({ field, fieldState }) => (
-                      <Select
+                      <HeroSelect
                         label="Буква"
                         className="min-w-[150px] flex-1"
                         isInvalid={fieldState.invalid}
@@ -217,7 +218,7 @@ export const CreateForm = <T extends ExerciseType>({
                             {item.letter}
                           </SelectItem>
                         ))}
-                      </Select>
+                      </HeroSelect>
                     )}
                     rules={{ required: true }}
                   />

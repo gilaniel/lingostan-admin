@@ -1,11 +1,12 @@
 import { useLangsStore } from "@/store/useLangsStore";
 import { useVocabularyStore } from "@/store/useVocabularyStore";
-import { Select, SelectItem } from "@heroui/select";
+import { SelectItem } from "@heroui/select";
 import { useEffect, useState } from "react";
 import { Create } from "./components/create";
 import { VocabularyItem } from "@/types/vocabulary/model";
 import { Button } from "@heroui/button";
 import { addToast } from "@heroui/toast";
+import { HeroSelect } from "@/components/heroSelect";
 
 const Vocabulary = () => {
   const {
@@ -35,7 +36,7 @@ const Vocabulary = () => {
       <h1 className="text-3xl font-semibold">Словарь</h1>
 
       <div className="flex gap-5">
-        <Select
+        <HeroSelect
           className="min-w-xs"
           selectedKeys={isLangsLoading ? [] : [activeLang.code]}
           label="Язык"
@@ -52,9 +53,9 @@ const Vocabulary = () => {
           {langs.map((lang) => (
             <SelectItem key={lang.code}>{lang.name}</SelectItem>
           ))}
-        </Select>
+        </HeroSelect>
 
-        <Select
+        <HeroSelect
           className="min-w-xs"
           selectedKeys={[selectedWord?.word || ""]}
           label="Слово"
@@ -70,7 +71,7 @@ const Vocabulary = () => {
           {data.map((item) => (
             <SelectItem key={item.word}>{item.word}</SelectItem>
           ))}
-        </Select>
+        </HeroSelect>
       </div>
 
       <Button

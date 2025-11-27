@@ -1,8 +1,9 @@
+import { HeroSelect } from "@/components/heroSelect";
 import { useVocabularyStore } from "@/store/useVocabularyStore";
 import { ExerciseItemContent } from "@/types/exercises/model";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
-import { Select, SelectItem } from "@heroui/select";
+import { SelectItem } from "@heroui/select";
 import { Plus, X } from "lucide-react";
 import { useMemo } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
@@ -44,7 +45,7 @@ export const VariantsForm = () => {
                     name={`variants.${index}.word`}
                     control={control}
                     render={({ field, fieldState }) => (
-                      <Select
+                      <HeroSelect
                         label="Слово"
                         className="min-w-[150px] flex-1"
                         isInvalid={fieldState.invalid}
@@ -71,7 +72,7 @@ export const VariantsForm = () => {
                         {data.map((item) => (
                           <SelectItem key={item.word}>{item.word}</SelectItem>
                         ))}
-                      </Select>
+                      </HeroSelect>
                     )}
                     rules={{ required: true }}
                   />
