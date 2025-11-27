@@ -4,6 +4,7 @@ export enum ExerciseType {
   MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
   MULTIPLE_CHOICE_IMGS = "MULTIPLE_CHOICE_IMGS",
   MATCHING = "MATCHING",
+  MATCHING_AUDIO = "MATCHING_AUDIO",
   TRANSLATION = "TRANSLATION",
   LISTENING = "LISTENING",
   SPEAKING = "SPEAKING",
@@ -47,10 +48,12 @@ export type ExerciseWithPairs = {
     id: string;
     left: {
       value: string;
+      displayValue?: string;
       audioUrl?: string;
     };
     right: {
       value: string;
+      displayValue?: string;
       audioUrl?: string;
     };
   }[];

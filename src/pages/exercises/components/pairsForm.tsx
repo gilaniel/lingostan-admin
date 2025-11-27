@@ -1,7 +1,8 @@
-import FileUpload from "@/components/fileUploader";
 import { HeroSelect } from "@/components/heroSelect";
+import { useExerciseStore } from "@/store/useExerciseStore";
 import { useLangsStore } from "@/store/useLangsStore";
-import { ExerciseItemContent } from "@/types/exercises/model";
+import { useVocabularyStore } from "@/store/useVocabularyStore";
+import { ExerciseItemContent, ExerciseType } from "@/types/exercises/model";
 import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { Input } from "@heroui/input";
@@ -19,6 +20,10 @@ import { v4 } from "uuid";
 export const PairsForm = () => {
   const { control, setValue } = useFormContext<ExerciseItemContent>();
   const { activeLang } = useLangsStore();
+  const { activeType } = useExerciseStore();
+  const { data: vocabulary } = useVocabularyStore();
+
+  const isMatchingAudio = activeType.key === ExerciseType.MATCHING_AUDIO;
 
   const {
     fields: pairs,
@@ -34,7 +39,15 @@ export const PairsForm = () => {
     [activeLang]
   );
 
-  const [left, right] = useWatch({ control, name: ["left", "right"] });
+  const vocabularyMap = useMemo(
+    () => new Map(vocabulary.map((item) => [item.word, item])),
+    [vocabulary]
+  );
+
+  const [left, right, pairsData] = useWatch({
+    control,
+    name: ["left", "right", "pairs"],
+  });
 
   const addVariant = () => {
     append({
@@ -164,55 +177,72 @@ export const PairsForm = () => {
                           ))}
                         </HeroSelect>
                       ) : (
-                        <>
-                          <Input
-                            {...field}
-                            label="Слово"
-                            labelPlacement="inside"
-                            isInvalid={fieldState.invalid}
-                          />
-                        </>
+                        <div className="flex flex-col gap-1">
+                          {isMatchingAudio ? (
+                            <>
+                              <HeroSelect
+                                isVirtualized={false}
+                                label="Слово"
+                                className="min-w-[150px] flex-1"
+                                isInvalid={fieldState.invalid}
+                                onSelectionChange={(v) => {
+                                  const selected = v.currentKey;
+
+                                  if (!selected) return;
+
+                                  const selectedItem =
+                                    vocabularyMap.get(selected);
+
+                                  field.onChange(selectedItem?.word);
+                                  setValue(
+                                    `pairs.${index}.left.audioUrl`,
+                                    selectedItem?.audioUrl
+                                  );
+                                  setValue(
+                                    `pairs.${index}.left.displayValue`,
+                                    selectedItem?.word
+                                  );
+                                }}
+                                selectedKeys={[field.value || ""]}
+                              >
+                                {vocabulary.map((item) => (
+                                  <SelectItem key={item.word}>
+                                    {item.word}
+                                  </SelectItem>
+                                ))}
+                              </HeroSelect>
+
+                              <Input
+                                value={
+                                  pairsData[index]
+                                    ? pairsData[index].left.displayValue || ""
+                                    : ""
+                                }
+                                onChange={(e) =>
+                                  setValue(
+                                    `pairs.${index}.left.displayValue`,
+                                    e.target.value
+                                  )
+                                }
+                                label="Слово без буквы"
+                                readOnly={!field.value}
+                                labelPlacement="inside"
+                              />
+                            </>
+                          ) : (
+                            <Input
+                              {...field}
+                              label="Слово"
+                              labelPlacement="inside"
+                              isInvalid={fieldState.invalid}
+                            />
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
                   rules={{ required: true }}
                 />
-
-                {!left.isLetter && (
-                  <div className="flex flex-col gap-1">
-                    <Controller
-                      control={control}
-                      name={`pairs.${index}.left.audioUrl`}
-                      render={({ field }) => (
-                        <FileUpload
-                          name={field.value || ""}
-                          onUpload={field.onChange}
-                          invalid={false}
-                        />
-                      )}
-                    />
-                    {/* <Controller
-                      control={control}
-                      name={`pairs.${index}.left.imageUrl`}
-                      render={({ field }) => (
-                        <>
-                          <FileUpload
-                            type="img"
-                            name={field.value || ""}
-                            onUpload={field.onChange}
-                            invalid={false}
-                          />
-                          {field.value && (
-                            <img
-                              className="max-h-[80px] w-auto object-contain object-center"
-                              src={import.meta.env.VITE_API_URL + field.value}
-                            />
-                          )}
-                        </>
-                      )}
-                    /> */}
-                  </div>
-                )}
               </div>
 
               <div className="flex flex-col gap-2 bg-white dark:bg-gray-600 shadow-medium p-3 rounded-medium flex-1 basis-1/2">
@@ -263,20 +293,6 @@ export const PairsForm = () => {
                   )}
                   rules={{ required: true }}
                 />
-
-                {!right.isLetter && (
-                  <Controller
-                    control={control}
-                    name={`pairs.${index}.right.audioUrl`}
-                    render={({ field }) => (
-                      <FileUpload
-                        name={field.value || ""}
-                        onUpload={field.onChange}
-                        invalid={false}
-                      />
-                    )}
-                  />
-                )}
               </div>
 
               <div

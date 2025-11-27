@@ -53,6 +53,10 @@ export const useExerciseStore = create<Excercise>((set, get) => ({
       name: "Найди пару",
       key: ExerciseType.MATCHING,
     },
+    {
+      name: "Найди пару (аудио)",
+      key: ExerciseType.MATCHING_AUDIO,
+    },
   ],
 
   setData: (data) =>

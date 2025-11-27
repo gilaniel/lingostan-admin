@@ -39,6 +39,7 @@ function getDefaultValues(type: ExerciseType) {
     case ExerciseType.MULTIPLE_CHOICE_IMGS:
       return { ...base, variants: [] };
     case ExerciseType.MATCHING:
+    case ExerciseType.MATCHING_AUDIO:
       return {
         ...base,
         left: { isLetter: false, onlyAudio: false },
@@ -81,6 +82,7 @@ export const CreateForm = <T extends ExerciseType>({
       case "MULTIPLE_CHOICE_IMGS":
         return <VariantsForm />;
       case "MATCHING":
+      case "MATCHING_AUDIO":
         return <PairsForm />;
     }
   };
