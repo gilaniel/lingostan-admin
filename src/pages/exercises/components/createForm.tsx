@@ -195,7 +195,9 @@ export const CreateForm = <T extends ExerciseType>({
                 />
               </div>
               <div className="flex gap-4 items-stretch">
-                {activeType.key !== ExerciseType.MATCHING && (
+                {![ExerciseType.MATCHING, ExerciseType.MATCHING_AUDIO].includes(
+                  activeType.key
+                ) && (
                   <Controller
                     name="letter"
                     control={control}
