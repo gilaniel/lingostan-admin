@@ -12,10 +12,12 @@ import { useEffect } from "react";
 import { useAuthStore } from "./store/useAuthStore";
 import { AuthLayout } from "./components/authLayout";
 import { useLangsStore } from "./store/useLangsStore";
+import { useVocabularyStore } from "./store/useVocabularyStore";
 
 function App() {
   const { refresh, isLoading, access_token } = useAuthStore();
-  const { fetchLangs } = useLangsStore();
+  const { fetchLangs, activeLang } = useLangsStore();
+  const { fetchData: fetchVocabulary } = useVocabularyStore();
 
   useEffect(() => {
     refresh();
@@ -25,8 +27,12 @@ function App() {
   useEffect(() => {
     if (access_token) {
       fetchLangs();
+
+      if (activeLang.id) {
+        fetchVocabulary(activeLang.id);
+      }
     }
-  }, [access_token]);
+  }, [access_token, activeLang]);
 
   if (isLoading) {
     return (

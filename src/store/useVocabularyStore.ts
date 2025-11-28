@@ -14,6 +14,8 @@ export const useVocabularyStore = create<Vocabulary>((set, get) => ({
   data: [],
 
   fetchData: async (langId) => {
+    if (!langId) return;
+
     const { data } = await apiClient.get<VocabularyItem[]>(
       `/languages/${langId}/vocabulary`
     );

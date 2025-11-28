@@ -46,8 +46,6 @@ const Vocabulary = () => {
             if (!lang) return;
 
             setACtiveLang(lang);
-
-            fetchData(lang.id);
           }}
         >
           {langs.map((lang) => (
