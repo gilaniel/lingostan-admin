@@ -6,6 +6,6 @@ export type LessonsItem = {
   duration?: number;
   videoUrl?: string;
   moduleId: number | string;
-  exercises?: number[] | string[];
+  exerciseIds?: number[] | string[];
   languageId: number;
 };

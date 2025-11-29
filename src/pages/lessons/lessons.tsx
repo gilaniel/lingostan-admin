@@ -126,7 +126,7 @@ const LessonsRoute = () => {
               reset({
                 ...lesson,
                 moduleId: String(lesson?.moduleId || ""),
-                exercises: lesson?.exercises?.map((item) => String(item)),
+                exerciseIds: lesson?.exerciseIds?.map((item) => String(item)),
               });
             }}
             isLoading={isLoading}
